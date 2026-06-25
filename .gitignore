@@ -1,0 +1,33 @@
+# Virtual environment
+genshin_env/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Output data (your personal artifact data, don't commit this)
+data/
+output/
+
+# Video and image inputs (too large for git)
+*.mp4
+*.mov
+*.avi
+*.png
+*.jpg
+*.jpeg
+
+# PaddleOCR model cache
+~/.paddleocr/
+inference/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
