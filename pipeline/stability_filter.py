@@ -101,4 +101,5 @@ if __name__ == "__main__":
 
     The key idea: A blurry transition frame will look very different from the next frame.
     A stable artifact panel will look almost identical to the next frame. That difference is what we measure.
+    
     """        
