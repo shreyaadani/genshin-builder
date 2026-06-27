@@ -94,3 +94,15 @@ if __name__ == "__main__":
             print(f"  Saved to: {out_path}")
 
         print(f"\nOpen {crops_dir} to verify panels look correct")
+
+        '''
+        How detect_right_panel() works:
+
+        Takes the full frame
+        Converts it to grayscale
+        Looks at a single horizontal line through the middle of the frame
+        That line goes from dark (the artifact grid) to light (the panel background)
+        We scan from 64% of the screen width rightward looking for that brightness jump
+        Where the brightness jumps = where the panel starts
+        Returns the coordinates: start x, top, end x, bottom
+        '''
