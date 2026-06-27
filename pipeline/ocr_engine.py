@@ -1,19 +1,12 @@
-from paddleocr import PaddleOCR
+import easyocr
 import numpy as np
 import cv2
 
 
-# Initialize PaddleOCR once at module level
-# use_textline_orientation=False — Genshin UI text is always upright
-# use_doc_orientation_classify=False — no need to detect document rotation
-# use_doc_unwarping=False — no need to unwarp, screenshots are flat
-# lang='en' — English text only
-_ocr = PaddleOCR(
-    use_textline_orientation=False,
-    use_doc_orientation_classify=False,
-    use_doc_unwarping=False,
-    lang='en'
-)
+# Initialize EasyOCR once at module level
+# gpu=False — use CPU, works on any hardware including Intel Arc
+# lang_list=['en'] — English only
+reader = easyocr.Reader(['en'], gpu=False)
 
 
 def read_panel(panel: np.ndarray) -> list[dict]:
@@ -22,9 +15,9 @@ def read_panel(panel: np.ndarray) -> list[dict]:
 
     Returns a list of detected text blocks, each with:
     - text: the string that was read
-    - confidence: how confident PaddleOCR is (0.0 to 1.0)
-    - position: top-y coordinate of the text on the panel
-                used later to map text to fields by vertical position
+    - confidence: how confident EasyOCR is (0.0 to 1.0)
+    - position: top-y coordinate for vertical ordering
+                used to map text to fields by position
 
     Args:
         panel: Cropped right panel image (numpy array, BGR)
@@ -33,37 +26,27 @@ def read_panel(panel: np.ndarray) -> list[dict]:
         List of dicts sorted top to bottom by vertical position
     """
 
-    # PaddleOCR expects RGB, OpenCV gives BGR
-    panel_rgb = cv2.cvtColor(panel, cv2.COLOR_BGR2RGB)
+    # EasyOCR accepts BGR directly — no conversion needed
+    results = reader.readtext(panel)
 
-    # Run OCR — returns list of OCRResult objects
-    results = _ocr.predict(panel_rgb)
+    # Each result is: (bbox, text, confidence)
+    # bbox is [[x1,y1],[x2,y1],[x2,y2],[x1,y2]] — 4 corners
 
     if not results:
         return []
 
-    result = results[0]  # One result per image
-
-    # Extract fields from result object
-    rec_texts  = result["rec_texts"]   # List of text strings
-    rec_scores = result["rec_scores"]  # List of confidence scores
-    rec_polys  = result["rec_polys"]   # List of bounding boxes (4 corner points each)
-
-    if not rec_texts:
-        return []
-
     blocks = []
 
-    for text, score, poly in zip(rec_texts, rec_scores, rec_polys):
+    for (bbox, text, confidence) in results:
         if not text.strip():
             continue
 
         # Top-left y coordinate for vertical ordering
-        top_y = poly[0][1]
+        top_y = bbox[0][1]
 
         blocks.append({
             "text": text.strip(),
-            "confidence": round(float(score), 4),
+            "confidence": round(float(confidence), 4),
             "position": round(float(top_y), 1),
         })
 
@@ -106,7 +89,6 @@ if __name__ == "__main__":
         print(f"No unique frames found in {unique_dir}")
         print("Run deduplicator.py first")
     else:
-        # Test on first 3 frames
         for i, path in enumerate(frame_paths[:3]):
             print(f"\n{'='*60}")
             print(f"Frame: {path}")
@@ -119,3 +101,26 @@ if __name__ == "__main__":
             panel = crop_panel(frame)
             blocks = read_panel(panel)
             print_blocks(blocks)
+
+            '''
+            What ocr_engine.py does:
+            reader — initialized once at the top
+
+            Loads EasyOCR's models once when the module is imported. gpu=False means it runs on CPU — works on any hardware, no CUDA or Intel Arc issues. We only load English since Genshin's UI is English.
+
+            read_panel()
+
+            Takes the cropped panel image
+            Calls reader.readtext(panel) — one clean call that runs the full OCR
+            EasyOCR returns a list of tuples: (bounding_box, text, confidence)
+            The bounding box has 4 corners — we take the top-left y coordinate to know where vertically on the panel this text lives
+            For each text block records: the text, confidence score, and vertical position
+            Sorts everything top to bottom by vertical position
+            Why vertical position matters:
+
+            Genshin's panel is always the same order top to bottom — set name, slot, main stat, level, substats, equipped character. Position tells us what field each text belongs to without any hardcoding.
+
+            print_blocks()
+
+            Debug helper only — prints a clean table of everything OCR found. Not used in the real pipeline.
+                        '''
