@@ -10,7 +10,7 @@ __pycache__/
 
 # Output data (your personal artifact data, don't commit this)
 data/
-output/
+
 
 # Video and image inputs (too large for git)
 *.mp4
