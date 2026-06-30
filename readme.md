@@ -84,12 +84,12 @@ Human imprecision is handled automatically — the pipeline detects stable frame
 
 ## Stack
 
-| Tool | Purpose |
-|---|---|
-| Python 3.11 | Core language |
-| OpenCV | Video processing, frame extraction, frame differencing |
-| PaddleOCR | Text extraction from cropped UI regions |
-| Pure Python | Schema validation, confidence scoring, output writing |
+| Tool        | Purpose                                                            |
+| ----------- | ------------------------------------------------------------------ |
+| Python 3.11 | Core language                                                      |
+| OpenCV      | Video processing, frame extraction, frame differencing             |
+| EasyOCR     | Text extraction from cropped panel, CPU-compatible on any hardware |
+| Pure Python | Schema validation, confidence scoring, output writing              |
 
 Fully local. Fully free. No paid APIs. Runs on consumer hardware.
 
@@ -130,7 +130,7 @@ genshin-builder/
 
 ```bash
 # Clone the repo
-git clone https://github.com/your-username/genshin-builder.git
+git clone https://github.com/shreyaadani/genshin-builder.git
 cd genshin-builder
 
 # Create virtual environment with Python 3.11
@@ -156,13 +156,13 @@ Outputs will be written to the `data/` folder.
 
 ## Roadmap
 
-| Phase | Description | Status |
-|---|---|---|
-| 1 | Video → Structured Artifact Database | 🚧 In Progress |
-| 2 | Genshin Optimizer export format | Planned |
-| 3 | Account planning (what to farm, what to level) | Planned |
-| 4 | LLM reasoning layer ("best Furina build I can make?") | Planned |
-| 5 | ML — artifact value prediction, keep/fodder classification | Planned |
+| Phase | Description                                                | Status         |
+| ----- | ---------------------------------------------------------- | -------------- |
+| 1     | Video → Structured Artifact Database                       | 🚧 In Progress |
+| 2     | Genshin Optimizer export format                            | Planned        |
+| 3     | Account planning (what to farm, what to level)             | Planned        |
+| 4     | LLM reasoning layer ("best Furina build I can make?")      | Planned        |
+| 5     | ML — artifact value prediction, keep/fodder classification | Planned        |
 
 ---
 
@@ -173,9 +173,10 @@ Outputs will be written to the `data/` folder.
 - Crop coordinates are resolution-independent (relative, not absolute pixels)
 - Validation layer catches OCR errors using domain knowledge of valid Genshin values
 - Works entirely offline with no external API dependencies
+- EasyOCR chosen over PaddleOCR for hardware compatibility — works on Intel Arc, AMD, and any CPU without CUDA dependency
 
 ---
 
 ## Skills Demonstrated
 
-`Computer Vision` `OCR` `ETL Pipeline Engineering` `Data Validation` `Python` `OpenCV` `PaddleOCR`
+`Computer Vision` `OCR` `ETL Pipeline Engineering` `Data Validation` `Python` `OpenCV` `EasyOCR`
