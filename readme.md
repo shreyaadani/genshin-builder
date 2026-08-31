@@ -158,7 +158,7 @@ Outputs will be written to the `data/` folder.
 
 | Phase | Description                                                | Status         |
 | ----- | ---------------------------------------------------------- | -------------- |
-| 1     | Video → Structured Artifact Database                       | 🚧 In Progress |
+| 1     | Video → Structured Artifact Database                       | Completed |
 | 2     | Genshin Optimizer export format                            | Planned        |
 | 3     | Account planning (what to farm, what to level)             | Planned        |
 | 4     | LLM reasoning layer ("best Furina build I can make?")      | Planned        |
